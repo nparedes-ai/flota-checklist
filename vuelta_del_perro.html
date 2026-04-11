@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1d4ed8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>🐕 Vuelta del Perro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#1d4ed8;--blue-d:#1e40af;--blue-l:#dbeafe;
+  --green:#065f46;--green-b:#d1fae5;--green-brd:#6ee7b7;
+  --red:#991b1b;--red-b:#fee2e2;--red-brd:#fca5a5;
+  --amber:#92400e;--amber-b:#fef3c7;--amber-brd:#fcd34d;
+  --gray:#374151;--gray-2:#6b7280;--gray-3:#9ca3af;--gray-4:#d1d5db;--gray-5:#f3f4f6;
+  --white:#ffffff;--text:#111827;
+  --radius:12px;--radius-sm:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:'Barlow',sans-serif;background:var(--gray-5);color:var(--text);min-height:100vh}
+
+/* HEADER */
+.hdr{background:var(--blue);color:#fff;padding:18px 16px 14px;text-align:center}
+.hdr-week{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;background:rgba(255,255,255,.18);display:inline-block;padding:3px 12px;border-radius:12px;margin-bottom:6px}
+.hdr-title{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;letter-spacing:.5px}
+.hdr-sub{font-size:12px;opacity:.8;margin-top:2px}
+.prog-wrap{margin-top:12px}
+.prog-labels{display:flex;justify-content:space-between;font-size:10px;opacity:.85;margin-bottom:4px}
+.prog-bar{background:rgba(255,255,255,.25);height:5px;border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:#fff;border-radius:3px;transition:width .35s}
+
+/* TABS */
+.tabs{display:flex;background:#fff;border-bottom:1px solid var(--gray-4)}
+.tab{flex:1;padding:13px 8px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;color:var(--gray-2);cursor:pointer;border-bottom:3px solid transparent;letter-spacing:.3px;transition:all .15s;user-select:none}
+.tab.on{color:var(--blue);border-bottom-color:var(--blue)}
+
+/* WRAP */
+.wrap{max-width:600px;margin:0 auto;padding:12px 12px 80px}
+
+/* CARDS */
+.card{background:#fff;border-radius:var(--radius);border:1px solid var(--gray-4);margin-bottom:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.card-h{padding:11px 16px;border-bottom:1px solid var(--gray-4);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;color:var(--gray-2);letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;gap:7px}
+.card-b{padding:14px 16px}
+
+/* FIELDS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.f{display:flex;flex-direction:column;gap:3px}
+.f label{font-size:10px;font-weight:600;color:var(--gray-3);text-transform:uppercase;letter-spacing:.5px}
+.f input,.f textarea,.f select{border:1.5px solid var(--gray-4);border-radius:var(--radius-sm);padding:9px 12px;font-size:14px;font-family:'Barlow',sans-serif;color:var(--text);background:#fff;outline:none;width:100%;transition:border-color .15s}
+.f input:focus,.f textarea:focus,.f select:focus{border-color:var(--blue)}
+.f textarea{resize:none}
+.s2{grid-column:1/-1}
+
+/* CHECK ITEMS */
+.ci{padding:13px 16px;border-bottom:1px solid var(--gray-4);display:flex;align-items:flex-start;gap:10px}
+.ci:last-child{border-bottom:none}
+.ci-info{flex:1;min-width:0}
+.ci-name{font-weight:600;font-size:14px;margin-bottom:2px}
+.ci-hint{font-size:11px;color:var(--gray-3);line-height:1.4}
+.ci-obs{margin-top:8px}
+.ci-btns{display:flex;gap:6px;flex-shrink:0;margin-top:1px}
+.cb{width:46px;height:46px;border-radius:10px;border:2px solid;cursor:pointer;font-size:17px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all .12s;background:var(--gray-5);flex-shrink:0}
+.cb-ok{border-color:var(--green-brd);background:var(--green-b);color:var(--green)}
+.cb-ok.on{background:var(--green);border-color:var(--green);color:#fff;transform:scale(1.05)}
+.cb-bad{border-color:var(--red-brd);background:var(--red-b);color:var(--red)}
+.cb-bad.on{background:var(--red);border-color:var(--red);color:#fff;transform:scale(1.05)}
+.obs-in{width:100%;border:1.5px solid var(--amber-brd);border-radius:var(--radius-sm);padding:8px 12px;font-size:13px;font-family:'Barlow',sans-serif;color:var(--text);background:var(--amber-b);outline:none;resize:none}
+.obs-in:focus{border-color:var(--amber)}
+
+/* PHOTO */
+.photo-row{padding:11px 16px;display:flex;align-items:center;gap:12px;border-top:1px solid var(--gray-4);background:var(--gray-5)}
+.photo-label{flex:1;font-size:12px;color:var(--gray-2);font-weight:500}
+.photo-btn{padding:8px 14px;border:1.5px solid var(--gray-4);border-radius:var(--radius-sm);background:#fff;cursor:pointer;font-size:12px;font-weight:600;color:var(--gray-2);font-family:'Barlow',sans-serif;transition:border-color .15s}
+.photo-btn:hover{border-color:var(--blue);color:var(--blue)}
+.photo-thumb{width:64px;height:48px;object-fit:cover;border-radius:var(--radius-sm);border:1.5px solid var(--gray-4);cursor:pointer;flex-shrink:0}
+
+/* ALERT */
+.alert{background:var(--red-b);border:1.5px solid var(--red-brd);border-radius:var(--radius-sm);padding:11px 14px;font-size:13px;color:var(--red);margin-bottom:12px;font-weight:500;display:flex;align-items:flex-start;gap:8px}
+
+/* BUTTONS */
+.btn{width:100%;padding:15px;border:none;border-radius:var(--radius);font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:17px;letter-spacing:.5px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:var(--blue-d)}
+.btn-primary:disabled{opacity:.5;cursor:default}
+.btn-wa{background:#25d366;color:#fff}
+.btn-wa:hover{background:#22c35e}
+.btn-print{background:#fff;color:var(--gray);border:1.5px solid var(--gray-4)}
+.btn-print:hover{border-color:var(--gray)}
+
+/* RECORDS */
+.rec{background:#fff;border:1px solid var(--gray-4);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:border-color .15s;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.rec:hover{border-color:var(--blue)}
+.rec-row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.rec-title{font-weight:600;font-size:14px}
+.rec-sub{font-size:11px;color:var(--gray-3);margin-top:2px}
+.badge-ok{background:var(--green-b);color:var(--green);padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap;border:1px solid var(--green-brd)}
+.badge-err{background:var(--red-b);color:var(--red);padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap;border:1px solid var(--red-brd)}
+
+/* DETAIL */
+.det-back{display:flex;align-items:center;gap:8px;padding:10px 0;cursor:pointer;color:var(--blue);font-weight:600;font-size:13px;font-family:'Barlow Condensed',sans-serif;letter-spacing:.3px}
+.det-item{display:flex;align-items:flex-start;gap:8px;padding:9px 14px;border-bottom:1px solid var(--gray-4);font-size:13px}
+.det-item:last-child{border-bottom:none}
+.dot-ok{color:var(--green);font-weight:700;font-size:15px;flex-shrink:0;margin-top:1px}
+.dot-bad{color:var(--red);font-weight:700;font-size:15px;flex-shrink:0;margin-top:1px}
+.dot-na{color:var(--gray-3);font-weight:700;font-size:15px;flex-shrink:0;margin-top:1px}
+
+/* EMPTY */
+.empty{text-align:center;padding:60px 20px;color:var(--gray-3)}
+.empty-icon{font-size:50px;margin-bottom:12px}
+.empty-title{font-size:16px;font-weight:600;color:var(--gray-2);margin-bottom:6px}
+
+/* TOAST */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#111;color:#fff;padding:10px 22px;border-radius:20px;font-size:13px;font-weight:600;z-index:999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* CONFIG */
+.cfg-note{font-size:11px;color:var(--gray-3);margin-top:5px}
+
+@media print{
+  .hdr,.tabs,.btn,.photo-btn,#toast{display:none!important}
+  .wrap{padding:0}
+  .card{box-shadow:none;border:1px solid #ccc;margin-bottom:8px}
+  body{background:#fff}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-week">REVISIÓN SEMANAL DE FLOTA</div>
+  <div class="hdr-title">🐕 Vuelta del Perro</div>
+  <div class="hdr-sub">Inspección rápida semanal — Solo toma 2 minutos</div>
+  <div class="prog-wrap" id="prog-wrap" style="display:none">
+    <div class="prog-labels"><span id="prog-txt">0 de 10 revisados</span><span id="prog-pct">0%</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab on" id="t-form" onclick="goTab('form')">📋 Nueva Revisión</div>
+  <div class="tab" id="t-hist" onclick="goTab('hist')">📂 Historial</div>
+  <div class="tab" id="t-cfg" onclick="goTab('cfg')">⚙️ Config</div>
+</div>
+
+<div class="wrap" id="content"></div>
+<div id="toast"></div>
+
+<script>
+const ITEMS=[
+  {id:'luces',e:'💡',n:'Luces',h:'Bajas, altas, freno, giro, reversa — todas funcionando correctamente'},
+  {id:'neum',e:'🛞',n:'Neumáticos',h:'Sin cortes, desgaste visible ni baja presión aparente'},
+  {id:'frenos',e:'🛑',n:'Frenos',h:'Pedal firme, respuesta normal al frenar, sin ruido extraño'},
+  {id:'aceite',e:'🛢️',n:'Nivel de Aceite',h:'Varilla entre mínimo y máximo'},
+  {id:'refrig',e:'🌡️',n:'Refrigerante',h:'Depósito en nivel correcto, sin pérdidas visibles'},
+  {id:'espejos',e:'🔍',n:'Espejos y Visibilidad',h:'Sin roturas, limpios y bien ajustados'},
+  {id:'parabrisas',e:'🪟',n:'Parabrisas',h:'Sin grietas ni daños que afecten la visión'},
+  {id:'carroceria',e:'🚘',n:'Carrocería',h:'Sin golpes nuevos, puertas y seguros funcionando correctamente'},
+  {id:'interior',e:'🪑',n:'Interior y Limpieza',h:'Limpio, cinturón en buen estado, sin daños en asientos'},
+  {id:'docs',e:'📄',n:'Documentos al día',h:'Permiso circulación, SOAP y revisión técnica vigentes'},
+];
+
+const DB='vdp-v1';
+let tab='form';
+let driver=localStorage.getItem('vdp-driver')||'';
+let supPhone=localStorage.getItem('vdp-phone')||'';
+let company=localStorage.getItem('vdp-company')||'Mi empresa';
+let fd={ppu:'',km:'',fecha:today()};
+let ck={};
+let photo=null;
+let obs='';
+let records=[];
+let detail=null;
+
+function today(){return new Date().toISOString().slice(0,10);}
+
+function initCk(){ck={};ITEMS.forEach(it=>{ck[it.id]={st:null,obs:''};});}
+initCk();
+
+function loadRecs(){try{const d=localStorage.getItem(DB);records=d?JSON.parse(d):[];}catch(e){records=[];}}
+function saveRecs(){try{localStorage.setItem(DB,JSON.stringify(records));}catch(e){showToast('⚠️ Almacenamiento lleno');}}
+
+function updateProg(){
+  const done=ITEMS.filter(it=>ck[it.id]?.st!==null).length;
+  const total=ITEMS.length;
+  const pct=Math.round(done/total*100);
+  const f=document.getElementById('prog-fill');
+  const t=document.getElementById('prog-txt');
+  const p=document.getElementById('prog-pct');
+  const w=document.getElementById('prog-wrap');
+  if(f){f.style.width=pct+'%';f.style.background=pct===100?'#10b981':'#fff';}
+  if(t)t.textContent=done+' de '+total+' revisados';
+  if(p)p.textContent=pct+'%';
+  if(w)w.style.display=tab==='form'?'block':'none';
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+function goTab(t){
+  tab=t;detail=null;
+  ['form','hist','cfg'].forEach(x=>{
+    document.getElementById('t-'+x).className='tab'+(t===x?' on':'');
+  });
+  updateProg();render();
+}
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+/* ── RENDER ── */
+function render(){
+  document.getElementById('content').innerHTML=
+    tab==='form'?renderForm():
+    tab==='hist'?(detail?renderDetail():renderHist()):
+    renderCfg();
+}
+
+function renderForm(){
+  const hasBad=ITEMS.some(it=>ck[it.id]?.st==='bad');
+  const week=getWeek();
+  const itemsHtml=ITEMS.map(it=>{
+    const c=ck[it.id];
+    const obsHtml=c.st==='bad'?`<div class="ci-obs"><textarea class="obs-in" rows="2" placeholder="¿Qué falla? Descríbelo brevemente..." onchange="setObs('${it.id}',this.value)">${esc(c.obs)}</textarea></div>`:'';
+    return`<div class="ci">
+      <div class="ci-info">
+        <div class="ci-name">${it.e} ${it.n}</div>
+        <div class="ci-hint">${it.h}</div>
+        ${obsHtml}
+      </div>
+      <div class="ci-btns">
+        <button class="cb cb-ok${c.st==='ok'?' on':''}" onclick="setSt('${it.id}','ok')" aria-label="Bueno">✓</button>
+        <button class="cb cb-bad${c.st==='bad'?' on':''}" onclick="setSt('${it.id}','bad')" aria-label="Malo">✗</button>
+      </div>
+    </div>`;
+  }).join('');
+  const photoHtml=photo
+    ?`<img src="${photo}" class="photo-thumb" onclick="photo=null;render()" title="Toca para quitar">`
+    :`<button class="photo-btn" onclick="takePhoto()">📷 Tomar foto</button>`;
+
+  return`
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;color:#9ca3af;letter-spacing:1px;margin-bottom:8px">📅 SEMANA ${week} — ${new Date().toLocaleDateString('es-CL',{year:'numeric'})}</div>
+
+    <div class="card">
+      <div class="card-h">🚗 Datos del conductor y vehículo</div>
+      <div class="card-b">
+        <div class="g2">
+          <div class="f">
+            <label>Tu nombre *</label>
+            <input value="${esc(driver)}" oninput="driver=this.value;localStorage.setItem('vdp-driver',this.value)" placeholder="Nombre completo">
+          </div>
+          <div class="f">
+            <label>Placa PPU *</label>
+            <input value="${esc(fd.ppu)}" oninput="fd.ppu=this.value.toUpperCase()" placeholder="ABCD12" style="text-transform:uppercase">
+          </div>
+          <div class="f">
+            <label>Kilometraje</label>
+            <input type="number" value="${esc(fd.km)}" oninput="fd.km=this.value" placeholder="km actuales">
+          </div>
+          <div class="f">
+            <label>Fecha</label>
+            <input type="date" value="${fd.fecha}" oninput="fd.fecha=this.value">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h">✅ Lista de verificación</div>
+      ${itemsHtml}
+      <div class="photo-row">
+        <div class="photo-label">📷 Foto general del vehículo (opcional)</div>
+        ${photoHtml}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h">📝 Observaciones adicionales</div>
+      <div class="card-b">
+        <div class="f">
+          <textarea rows="3" placeholder="Algo más que reportar esta semana..." oninput="obs=this.value">${esc(obs)}</textarea>
+        </div>
+      </div>
+    </div>
+
+    ${hasBad?`<div class="alert">⚠️ Tienes ítems con problemas detectados — incluirlos en el reporte a tu supervisor</div>`:''}
+
+    <button class="btn btn-primary" onclick="submitForm()">✅ GUARDAR Y ENVIAR REPORTE</button>
+    <button class="btn btn-wa" onclick="shareWA()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      COMPARTIR POR WHATSAPP
+    </button>
+    <button class="btn btn-print" onclick="window.print()">🖨️ IMPRIMIR / GUARDAR PDF</button>
+  `;
+}
+
+function renderHist(){
+  if(!records.length)return`<div class="empty"><div class="empty-icon">📭</div><div class="empty-title">Sin revisiones aún</div><p>Completa tu primera vuelta del perro</p></div>`;
+  return`<div style="padding-bottom:20px">${records.map(r=>{
+    const d=new Date(r.createdAt);
+    const bad=ITEMS.filter(it=>r.checks[it.id]?.st==='bad').length;
+    const badge=bad>0?`<span class="badge-err">⚠ ${bad} prob.</span>`:`<span class="badge-ok">✓ OK</span>`;
+    return`<div class="rec" onclick="viewDetail('${r.id}')">
+      <div class="rec-row">
+        <div>
+          <div class="rec-title">${esc(r.info.ppu||'Sin PPU')} — ${esc(r.info.driver||'Sin nombre')}</div>
+          <div class="rec-sub">${d.toLocaleDateString('es-CL',{day:'2-digit',month:'long',year:'numeric'})} · ${d.toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'})}</div>
+          ${r.info.km?`<div class="rec-sub">📍 ${esc(r.info.km)} km</div>`:''}
+        </div>
+        ${badge}
+      </div>
+      ${bad>0?`<div style="margin-top:7px;font-size:11px;color:#9ca3af">Problemas: ${ITEMS.filter(it=>r.checks[it.id]?.st==='bad').map(it=>it.n).join(', ')}</div>`:''}
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function renderDetail(){
+  const r=records.find(x=>x.id===detail);
+  if(!r)return renderHist();
+  const d=new Date(r.createdAt);
+  const bad=ITEMS.filter(it=>r.checks[it.id]?.st==='bad');
+  const ok=ITEMS.filter(it=>r.checks[it.id]?.st==='ok');
+  const na=ITEMS.filter(it=>r.checks[it.id]?.st===null);
+  return`
+    <div class="det-back" onclick="detail=null;render()">← Volver al historial</div>
+    <div class="card">
+      <div class="card-h">🚗 ${esc(r.info.ppu||'Sin PPU')} — ${esc(r.info.driver||'Sin nombre')}</div>
+      <div class="card-b">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:13px">
+          ${[['Fecha',d.toLocaleDateString('es-CL')],['Hora',d.toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'})],['KM',r.info.km||'—'],['PPU',r.info.ppu||'—']].map(([k,v])=>`<div><span style="color:#9ca3af">${k}: </span><strong>${esc(v)}</strong></div>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h">📋 Resultados</div>
+      ${bad.map(it=>`<div class="det-item"><span class="dot-bad">✗</span><div><strong>${it.n}</strong>${r.checks[it.id]?.obs?`<div style="font-size:11px;color:#6b7280;margin-top:2px">${esc(r.checks[it.id].obs)}</div>`:''}</div></div>`).join('')}
+      ${ok.map(it=>`<div class="det-item"><span class="dot-ok">✓</span><span>${it.n}</span></div>`).join('')}
+      ${na.map(it=>`<div class="det-item"><span class="dot-na">—</span><span style="color:#9ca3af">${it.n} (sin revisar)</span></div>`).join('')}
+    </div>
+    ${r.obs?`<div class="card"><div class="card-h">📝 Observaciones</div><div class="card-b" style="font-size:13px">${esc(r.obs)}</div></div>`:''}
+    ${r.photo?`<div class="card"><div class="card-h">📷 Foto</div><div style="padding:10px"><img src="${r.photo}" style="width:100%;border-radius:8px;border:1px solid #e5e7eb"></div></div>`:''}
+    <button class="btn btn-print" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+    <button class="btn" style="background:#fee2e2;color:#991b1b;border:1.5px solid #fca5a5" onclick="deleteRec('${r.id}')">🗑️ Eliminar este registro</button>
+  `;
+}
+
+function renderCfg(){
+  return`
+    <div class="card">
+      <div class="card-h">⚙️ Configuración</div>
+      <div class="card-b">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="f">
+            <label>Empresa / Nombre flota</label>
+            <input value="${esc(company)}" oninput="company=this.value;localStorage.setItem('vdp-company',this.value)" placeholder="Nombre de la empresa">
+          </div>
+          <div class="f">
+            <label>Teléfono supervisor (WhatsApp)</label>
+            <input type="tel" value="${esc(supPhone)}" oninput="supPhone=this.value;localStorage.setItem('vdp-phone',this.value)" placeholder="+56912345678">
+            <span class="cfg-note">Con código de país. Si se configura, el WhatsApp irá directo al supervisor.</span>
+          </div>
+          <div class="f">
+            <label>Tu nombre (se guarda automáticamente)</label>
+            <input value="${esc(driver)}" oninput="driver=this.value;localStorage.setItem('vdp-driver',this.value)" placeholder="Nombre del conductor">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h">💾 Datos guardados</div>
+      <div class="card-b" style="font-size:13px;color:#6b7280">
+        <p>${records.length} revisión(es) guardada(s) en este dispositivo.</p>
+        <p style="margin-top:6px">Los datos se guardan localmente en el navegador de tu teléfono.</p>
+        <button class="btn" style="margin-top:12px;background:#fee2e2;color:#991b1b;border:1.5px solid #fca5a5;font-size:13px;padding:10px" onclick="clearAll()">🗑️ Borrar todo el historial</button>
+      </div>
+    </div>
+  `;
+}
+
+/* ── ACTIONS ── */
+function setSt(id,val){
+  ck[id].st=ck[id].st===val?null:val;
+  if(ck[id].st!=='bad')ck[id].obs='';
+  updateProg();render();
+}
+function setObs(id,val){if(ck[id])ck[id].obs=val;}
+function takePhoto(){
+  const i=document.createElement('input');
+  i.type='file';i.accept='image/*';i.capture='environment';
+  i.onchange=e=>{
+    const f=e.target.files?.[0];if(!f)return;
+    const r=new FileReader();
+    r.onload=ev=>{
+      const im=new Image();
+      im.onload=()=>{
+        const c=document.createElement('canvas');
+        const M=800;let w=im.width,h=im.height;
+        if(w>M){h=Math.round(h*M/w);w=M;}
+        if(h>M){w=Math.round(w*M/h);h=M;}
+        c.width=w;c.height=h;c.getContext('2d').drawImage(im,0,0,w,h);
+        photo=c.toDataURL('image/jpeg',.62);render();
+      };
+      im.src=ev.target.result;
+    };
+    r.readAsDataURL(f);
+  };
+  i.click();
+}
+
+function submitForm(){
+  if(!driver.trim()){showToast('⚠️ Ingresa tu nombre');return;}
+  if(!fd.ppu.trim()){showToast('⚠️ Ingresa la Placa PPU');return;}
+  const allDone=ITEMS.every(it=>ck[it.id]?.st!==null);
+  if(!allDone&&!confirm('Hay ítems sin revisar. ¿Enviar igual?'))return;
+  const rec={
+    id:Date.now().toString(),
+    createdAt:new Date().toISOString(),
+    info:{driver,ppu:fd.ppu,km:fd.km,fecha:fd.fecha},
+    checks:JSON.parse(JSON.stringify(ck)),
+    photo,obs,
+  };
+  records.unshift(rec);saveRecs();
+  showToast('✅ Revisión guardada correctamente');
+  initCk();fd={ppu:'',km:'',fecha:today()};photo=null;obs='';
+  updateProg();render();
+}
+
+function buildWA(){
+  const d=new Date();
+  const bad=ITEMS.filter(it=>ck[it.id]?.st==='bad');
+  const ok=ITEMS.filter(it=>ck[it.id]?.st==='ok');
+  const na=ITEMS.filter(it=>ck[it.id]?.st===null);
+  let m=`🐕 *VUELTA DEL PERRO — ${company}*\n`;
+  m+=`📅 ${d.toLocaleDateString('es-CL',{weekday:'long',day:'2-digit',month:'long'})} ${d.toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'})}\n`;
+  m+=`🚗 PPU: *${fd.ppu||'No indicado'}*`;
+  if(fd.km)m+=` | KM: *${fd.km}*`;
+  m+=`\n👤 Conductor: *${driver||'No indicado'}*\n\n`;
+  if(bad.length>0){
+    m+=`⚠️ *PROBLEMAS DETECTADOS (${bad.length}):*\n`;
+    bad.forEach(it=>{const o=ck[it.id]?.obs;m+=`  ✗ ${it.n}${o?': '+o:''}\n`;});
+    m+='\n';
+  }
+  if(ok.length>0){
+    m+=`✅ *EN BUEN ESTADO:*\n`;
+    ok.forEach(it=>{m+=`  ✓ ${it.n}\n`;});
+    m+='\n';
+  }
+  if(na.length>0)m+=`— Sin revisar: ${na.map(it=>it.n).join(', ')}\n\n`;
+  if(obs)m+=`📝 *Obs:* ${obs}\n`;
+  m+=`\n_Enviado desde Vuelta del Perro App_`;
+  return m;
+}
+function shareWA(){
+  const msg=buildWA();
+  const phone=supPhone.replace(/[^0-9]/g,'');
+  const url=phone?`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`:`https://wa.me/?text=${encodeURIComponent(msg)}`;
+  window.open(url,'_blank');
+}
+
+function viewDetail(id){detail=id;render();}
+function deleteRec(id){
+  if(!confirm('¿Eliminar este registro?'))return;
+  records=records.filter(r=>r.id!==id);saveRecs();detail=null;render();
+}
+function clearAll(){
+  if(!confirm('¿Borrar TODOS los registros? Esta acción no se puede deshacer.'))return;
+  records=[];saveRecs();render();showToast('Historial borrado');
+}
+function getWeek(){
+  const d=new Date();
+  const s=new Date(d.getFullYear(),0,1);
+  return Math.ceil(((d-s)/86400000+s.getDay()+1)/7);
+}
+
+loadRecs();render();updateProg();
+</script>
+</body>
+</html>
